@@ -36,6 +36,9 @@ public class SecurityConfiguration {
                         AbstractHttpConfigurer::disable
                 ).authorizeHttpRequests(
                         request -> request
+                                //to permit localhost:8080 to show hello world
+                                .requestMatchers("/").permitAll()
+
                                 .requestMatchers("/api/v1/auth/**").permitAll()
                                 .requestMatchers("/api/v1/admin").hasAnyAuthority(Role.ADMIN.name())
                                 .requestMatchers("/api/v1/user").hasAnyAuthority(Role.USER.name())
