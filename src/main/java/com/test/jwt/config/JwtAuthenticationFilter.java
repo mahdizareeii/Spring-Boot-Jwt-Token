@@ -1,6 +1,6 @@
 package com.test.jwt.config;
 
-import com.test.jwt.service.JwtService;
+import com.test.jwt.util.TokenUtil;
 import com.test.jwt.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,11 +21,11 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final TokenUtil tokenUtil;
     private final UserService userService;
 
-    public JwtAuthenticationFilter(JwtService jwtService, UserService userService) {
-        this.jwtService = jwtService;
+    public JwtAuthenticationFilter(TokenUtil tokenUtil, UserService userService) {
+        this.tokenUtil = tokenUtil;
         this.userService = userService;
     }
 
@@ -43,13 +43,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwt = authHeader.substring(7);
-        userEmail = jwtService.extractUserName(jwt);
+        userEmail = tokenUtil.extractUserName(jwt);
         if (
                 io.micrometer.common.util.StringUtils.isNotEmpty(userEmail) &&
                         SecurityContextHolder.getContext().getAuthentication() == null
         ) {
             UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userEmail);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
+            if (tokenUtil.isTokenValid(jwt, userDetails)) {
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()

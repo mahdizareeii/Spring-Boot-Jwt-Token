@@ -1,4 +1,4 @@
-package com.test.jwt.service;
+package com.test.jwt.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -9,15 +9,34 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
 import java.util.function.Function;
 
-public class JwtService {
+public class TokenUtil {
+    // One hour (in milliseconds) for access token expiration
+    final int tokenExpirationTime = 60 * 60 * 1000;
+
+    // One week (in milliseconds) for refresh token expiration
+    final int refreshTokenExpirationTime = 7 * 24 * 60 * 60 * 1000;
+
     public String generateToken(UserDetails userDetails) {
         return Jwts
                 .builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + tokenExpirationTime))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+
+    public String generateRefreshToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        return Jwts
+                .builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpirationTime))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -36,8 +55,10 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        byte[] key = Decoders.BASE64.decode("bWFoZGk=");
-        return Keys.hmacShaKeyFor(key);
+        //the custom singing key should be strong
+        /*byte[] key = Decoders.BASE64.decode("T3N0YU1AaGRpWmFyZWVpXzUwNjU=");
+        return Keys.hmacShaKeyFor(key);*/
+        return Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
     private boolean isTokenExpire(String token) {
