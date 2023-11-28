@@ -55,10 +55,8 @@ public class TokenUtil {
     }
 
     private Key getSigningKey() {
-        //the custom singing key should be strong
-        /*byte[] key = Decoders.BASE64.decode("T3N0YU1AaGRpWmFyZWVpXzUwNjU=");
-        return Keys.hmacShaKeyFor(key);*/
-        return Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        byte[] keyBytes = java.util.Base64.getDecoder().decode("TUBoZGlaQGFyZWVpXzUwMjIyOTQwMDk0NTg1NDBAQDA5MzA2MDk1MDY1JCQ=");
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     private boolean isTokenExpire(String token) {

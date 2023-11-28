@@ -1,6 +1,7 @@
 package com.test.jwt.service;
 
 import com.test.jwt.dto.JwtAuthenticationResponse;
+import com.test.jwt.dto.RefreshTokenRequest;
 import com.test.jwt.dto.SignInRequest;
 import com.test.jwt.dto.SignupRequest;
 import com.test.jwt.entities.Role;
@@ -52,15 +53,29 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-        var user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+        final var user = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new IllegalArgumentException("Invalid Email or Password")
         );
-        var token = tokenUtil.generateToken(user);
-        var refreshToken = tokenUtil.generateRefreshToken(new HashMap<>(), user);
+        final var token = tokenUtil.generateToken(user);
+        final var refreshToken = tokenUtil.generateRefreshToken(new HashMap<>(), user);
 
-        var jwtAuthenticationResponse = new JwtAuthenticationResponse();
+        final var jwtAuthenticationResponse = new JwtAuthenticationResponse();
         jwtAuthenticationResponse.setToken(token);
         jwtAuthenticationResponse.setRefreshToken(refreshToken);
         return jwtAuthenticationResponse;
+    }
+
+    public JwtAuthenticationResponse refreshToken(RefreshTokenRequest request) {
+        final var userEmail = tokenUtil.extractUserName(request.getRefreshToken());
+        final var user = userRepository.findByEmail(userEmail).orElseThrow();
+        if (tokenUtil.isTokenValid(request.getRefreshToken(), user)) {
+            final var token = tokenUtil.generateToken(user);
+
+            final var jwtAuthenticationResponse = new JwtAuthenticationResponse();
+            jwtAuthenticationResponse.setToken(token);
+            jwtAuthenticationResponse.setRefreshToken(request.getRefreshToken());
+            return jwtAuthenticationResponse;
+        }
+        return null;
     }
 }

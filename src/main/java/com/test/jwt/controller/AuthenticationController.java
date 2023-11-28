@@ -2,6 +2,7 @@ package com.test.jwt.controller;
 
 
 import com.test.jwt.dto.JwtAuthenticationResponse;
+import com.test.jwt.dto.RefreshTokenRequest;
 import com.test.jwt.dto.SignInRequest;
 import com.test.jwt.dto.SignupRequest;
 import com.test.jwt.entities.User;
@@ -30,6 +31,11 @@ public class AuthenticationController {
     @PostMapping("/signin")
     public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody SignInRequest request) {
         return ResponseEntity.ok(service.signIn(request));
+    }
+
+    @PostMapping("refreshToken")
+    public ResponseEntity<JwtAuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(service.refreshToken(request));
     }
 
 }
