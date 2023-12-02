@@ -1,9 +1,6 @@
 package com.test.jwt.service;
 
-import com.test.jwt.dto.JwtAuthenticationResponse;
-import com.test.jwt.dto.RefreshTokenRequest;
-import com.test.jwt.dto.SignInRequest;
-import com.test.jwt.dto.SignupRequest;
+import com.test.jwt.dto.*;
 import com.test.jwt.entities.Role;
 import com.test.jwt.entities.User;
 import com.test.jwt.repository.UserRepository;
@@ -36,17 +33,17 @@ public class AuthenticationService {
         this.tokenUtil = tokenUtil;
     }
 
-    public User signUp(SignupRequest request) {
+    public BaseResponse<User> signUp(SignupRequest request) {
         final var user = new User();
         user.setEmail(request.getEmail());
         user.setName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        return userRepository.save(user);
+        return new BaseResponse<>(userRepository.save(user));
     }
 
-    public JwtAuthenticationResponse signIn(SignInRequest request) {
+    public BaseResponse<JwtAuthenticationResponse> signIn(SignInRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -62,10 +59,10 @@ public class AuthenticationService {
         final var jwtAuthenticationResponse = new JwtAuthenticationResponse();
         jwtAuthenticationResponse.setToken(token);
         jwtAuthenticationResponse.setRefreshToken(refreshToken);
-        return jwtAuthenticationResponse;
+        return new BaseResponse<>(jwtAuthenticationResponse);
     }
 
-    public JwtAuthenticationResponse refreshToken(RefreshTokenRequest request) {
+    public BaseResponse<JwtAuthenticationResponse> refreshToken(RefreshTokenRequest request) {
         final var userEmail = tokenUtil.extractUserName(request.getRefreshToken());
         final var user = userRepository.findByEmail(userEmail).orElseThrow();
         if (tokenUtil.isTokenValid(request.getRefreshToken(), user)) {
@@ -74,7 +71,7 @@ public class AuthenticationService {
             final var jwtAuthenticationResponse = new JwtAuthenticationResponse();
             jwtAuthenticationResponse.setToken(token);
             jwtAuthenticationResponse.setRefreshToken(request.getRefreshToken());
-            return jwtAuthenticationResponse;
+            return new BaseResponse<>(jwtAuthenticationResponse);
         }
         return null;
     }
