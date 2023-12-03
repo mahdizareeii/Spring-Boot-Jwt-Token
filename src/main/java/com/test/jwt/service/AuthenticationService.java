@@ -7,6 +7,7 @@ import com.test.jwt.repository.UserRepository;
 import com.test.jwt.util.TokenUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,14 +45,18 @@ public class AuthenticationService {
     }
 
     public BaseResponse<JwtAuthenticationResponse> signIn(SignInRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("");
+        }
         final var user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new IllegalArgumentException("Invalid Email or Password")
+                () -> new UsernameNotFoundException("")
         );
         final var token = tokenUtil.generateToken(user);
         final var refreshToken = tokenUtil.generateRefreshToken(new HashMap<>(), user);
