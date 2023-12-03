@@ -21,7 +21,7 @@ public class Providers {
     ) {
         ApplicationRunner runner = new ApplicationRunner() {
             @Override
-            public void run(ApplicationArguments args) throws Exception {
+            public void run(ApplicationArguments args) {
                 if (repository.findByEmail("admin@admin.com").isEmpty()) {
                     User user = new User();
                     user.setName("admin");

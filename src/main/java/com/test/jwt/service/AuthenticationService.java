@@ -5,21 +5,23 @@ import com.test.jwt.entities.Role;
 import com.test.jwt.entities.User;
 import com.test.jwt.repository.UserRepository;
 import com.test.jwt.util.TokenUtil;
+import jakarta.validation.Valid;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.HashMap;
 
 @Service
+@Validated
 public class AuthenticationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-
     private final TokenUtil tokenUtil;
 
     public AuthenticationService(
@@ -34,7 +36,7 @@ public class AuthenticationService {
         this.tokenUtil = tokenUtil;
     }
 
-    public BaseResponse<User> signUp(SignupRequest request) {
+    public BaseResponse<User> signUp(@Valid SignupRequest request) {
         final var user = new User();
         user.setEmail(request.getEmail());
         user.setName(request.getFirstName());
@@ -44,7 +46,7 @@ public class AuthenticationService {
         return new BaseResponse<>(userRepository.save(user));
     }
 
-    public BaseResponse<JwtAuthenticationResponse> signIn(SignInRequest request) {
+    public BaseResponse<JwtAuthenticationResponse> signIn(@Valid SignInRequest request) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
