@@ -1,13 +1,16 @@
 # How to deploy the project on a server:
 
-## ** Install Nginx : 
+## **Install Nginx : 
 apt-get update
+
 apt upgrade
+
 apt-get install nginx
+
 apt-get install systemd
 
 
-## ** Install Java :
+## **Install Java :
 apt-get update
 apt-get install default-jre
 apt-get install default-jdk
