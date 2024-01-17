@@ -1,7 +1,7 @@
 # How to deploy the project on a server:
 
 ## **Install Nginx : 
-apt-get update
+```apt-get update```
 
 apt upgrade
 
