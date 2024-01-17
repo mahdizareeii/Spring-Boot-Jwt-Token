@@ -1,13 +1,13 @@
-How to deploy the project on a server:
+# How to deploy the project on a server:
 
-Install Nginx : 
+## ** Install Nginx : 
 apt-get update
 apt upgrade
 apt-get install nginx
 apt-get install systemd
 
 
-Install Java :
+## ** Install Java :
 apt-get update
 apt-get install default-jre
 apt-get install default-jdk
@@ -19,11 +19,15 @@ sudo apt install openjdk-17-jdk
 then make a directory in your server for example 'api'
 mkdir api
 cd api
+
 then clone your jar file in the folder with git clone for example:
 git clone https://github.com/mahdizareeii/TestJar
-after clone the jar file go in that directory for example:
+
+after cloning the jar file go to that directory for example:
 cd TestJar
+
 and use the 'ls' command to see the files and write this command:
 java -jar TestJwt-1.0.jar
-if you didn't have any error your project will run you can see it by searching your ip in your browser for example:
+
+if you don't have any errors your project will run you can see it by searching your ip in your browser for example:
 http://192.141.168.245:8080/
