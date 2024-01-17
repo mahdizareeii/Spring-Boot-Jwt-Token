@@ -25,3 +25,5 @@ after clone the jar file go in that directory for example:
 cd TestJar
 and use the 'ls' command to see the files and write this command:
 java -jar TestJwt-1.0.jar
+if you didn't have any error your project will run you can see it by searching your ip in your browser for example:
+http://192.141.168.245:8080/
