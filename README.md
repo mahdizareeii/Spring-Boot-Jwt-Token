@@ -27,7 +27,9 @@ be careful you should install the version of java that you used in your project 
 sudo apt install openjdk-17-jdk
 
 then make a directory in your server for example 'api'
+
 mkdir api
+
 cd api
 
 then clone your jar file in the folder with git clone for example:
